@@ -1,7 +1,9 @@
+import { Router } from './screen/router'
+
 function App() {
   return (
     <div className="App">
-
+      <Router />
     </div>
   );
 }

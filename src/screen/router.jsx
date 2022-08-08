@@ -1,11 +1,12 @@
-import { BrowserRouter, Route, Router } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
-export function MainRouter(props) {
+export function Router(props) {
     return (
         <BrowserRouter>
-            <Router>
+            <Routes>
                 <Route path='/'>123</Route>
-            </Router>
+                <Route path='/234'>234</Route>
+            </Routes>
         </BrowserRouter>
     )
 }
