@@ -4,8 +4,9 @@ export function Router(props) {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path='/' element={<>0</>} />
-                <Route path='/123' element={<>123</>} />
+                <Route path='/signin/*' element={<>0</>} />
+                <Route path='/signup/*' element={<>0</>} />                
+                <Route path='/post/*' element={<></>} />
             </Routes>
         </BrowserRouter>
     )
