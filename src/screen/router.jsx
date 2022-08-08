@@ -4,8 +4,8 @@ export function Router(props) {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path='/'>123</Route>
-                <Route path='/234'>234</Route>
+                <Route path='/' element={<>0</>} />
+                <Route path='/123' element={<>123</>} />
             </Routes>
         </BrowserRouter>
     )
