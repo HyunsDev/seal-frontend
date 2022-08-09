@@ -1,10 +1,11 @@
 import { Router } from './screen/router'
+import { OpizeWrapper } from 'opize-design-system'
 
 function App() {
   return (
-    <div className="App">
+    <OpizeWrapper>
       <Router />
-    </div>
+    </OpizeWrapper>
   );
 }
 
