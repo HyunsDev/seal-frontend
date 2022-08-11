@@ -6,4 +6,6 @@ export const View = styled.div`
     padding: 0px 12px;
     margin: 0 auto;
     min-height: 100%;
+    margin-top: 40px;
+    padding-top: 20px;
 `

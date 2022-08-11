@@ -5,8 +5,9 @@ import { Flex, Logo, View } from "../../components";
 import { LayoutBottom } from "../../components/layout/bottom";
 import { useForm } from 'react-hook-form'
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
+import axios from "axios";
 
 const StyledForm = styled.form`
     display: flex;
@@ -26,12 +27,27 @@ const StyledLink = styled(Link)`
 `
 
 export function SignUp() {
+    const navigate = useNavigate()
     const { register, handleSubmit, formState: { errors }, watch } = useForm();
     const password = useRef({});
     password.current = watch("password", '');
 
-    const login = async (data) => {
+    const submit = async (data) => {
         console.log(data)
+        try {
+            const res = await axios.post(`${process.env.REACT_APP_API_SERVER}/auth/sign-up`, {
+                id: data.id,
+                password: data.password,
+                name: data.name,
+                type: data.type,
+
+            })
+            console.log(res)
+            localStorage.setItem('token', res.data.token)
+            navigate('/') 
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     return (
@@ -39,7 +55,7 @@ export function SignUp() {
             <Flex.Center><Logo width="200px" /></Flex.Center>
             
             <LayoutBottom>
-                <StyledForm onSubmit={handleSubmit(login)}>
+                <StyledForm onSubmit={handleSubmit(submit)}>
                     <TextField {...register('name', {
                         required: true
                     })} label='이름' error={errors.name?.type === 'required' && '이름을 입력해주세요'} />

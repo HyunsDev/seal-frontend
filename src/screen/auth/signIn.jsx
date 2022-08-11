@@ -5,7 +5,7 @@ import { Flex, Logo, View } from "../../components";
 import { LayoutBottom } from "../../components/layout/bottom";
 import { useForm } from 'react-hook-form'
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const StyledForm = styled.form`
@@ -26,16 +26,19 @@ const StyledLink = styled(Link)`
 `
 
 export function SignIn() {
+    const navigate = useNavigate()
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     const login = async (data) => {
         console.log(data)
         try {
-            const res = await axios.post("https://api.seal.com/sign-in", {
+            const res = await axios.post(`${process.env.REACT_APP_API_SERVER}/auth/sign-in`, {
                 id: data.id,
                 password: data.password
             })
             console.log(res)
+            localStorage.setItem('token', res.data.token)
+            navigate('/')
         } catch (err) {
             console.error(err)
         }
