@@ -1,4 +1,4 @@
-import { Flex } from "opize-design-system";
+import { Flex, TextField } from "opize-design-system";
 import styled from "styled-components";
 import { Header, View } from "../../components";
 import { PostItem } from "../../components/postItem";
@@ -6,24 +6,26 @@ import Logo from '../../assets/alpha_fit.png'
 import { BottomNav } from "../../components/bottomNav";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import axios from "axios";
-import { HeaderButton } from "../../components/headerButton";
-import { MagnifyingGlass, Plus } from "phosphor-react";
-import { useNavigate } from "react-router-dom";
-import { FloatingButton } from "../../components/floatButton";
+import { Back } from "../../components/back";
 
 const Img = styled.img`
     height: 20px;
 `
+const StyledForm = styled.form`
 
-export function Main(props) {
+`
+
+export function Search(props) {
+    const [ searchText, setSearchText ] = useState('')
+
     const [ list, setList ] = useState([])
-    const navigate = useNavigate()
+    const { register, handleSubmit, formState: { errors, isDirty }, watch } = useForm();
 
     useEffect(() => {
         ;(async () => {
             try {
-                throw Error()
                 const res = await axios.get(`${process.env.REACT_APP_API_SERVER}/post`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -36,24 +38,7 @@ export function Main(props) {
                         id: 123,
                         title: '제목',
                         category: '모의 면접',
-                        createdAt: '123',
-                        tag : ['태그1', '태그2'],
-			            status: "상태(open, close, pause)",
-			            condition: {
-			            	grade: [1, 2],
-			            	line: "자연",
-                        },
-                        author: {
-                            id: "유저 아이디",
-                            name: "유저 이름",
-                            grade: "학년",
-                            class: "반",
-                            number: "번호",
-                        },
-                    }, {
-                        id: 124,
-                        title: '제목',
-                        category: '모의 면접',
+                        content: "글 내용",
                         createdAt: '123',
                         tag : ['태그1', '태그2'],
 			            status: "상태(open, close, pause)",
@@ -79,23 +64,26 @@ export function Main(props) {
     return (
         <View>
             <Header>
-                <Flex style={{justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
-                    <Img src={Logo} alt='' />
-                    <Flex>
-                        <HeaderButton onClick={() => navigate('/post/search')}>
-                            <MagnifyingGlass size={20} weight={'bold'} />
-                        </HeaderButton>
-                    </Flex>
-                </Flex>
+                <Back />
+                <TextField value={searchText} onChange={e => setSearchText(e.target.value)} placeholder='검색어를 입력하세요' />
             </Header>
+            
+            {/* <StyledForm onSubmit={handleSubmit(submit)}>
+                <TextField {...register('input', {
+                                required: true
+                        })} label='' error={errors.title?.type === 'required' && '제목'} />
+            </StyledForm> */}
             <Flex style={{flexDirection: 'column', gap: '16px'}}>
                 {
-                    list.map(e => <PostItem key={e.id} to={`/post/${e.id}`} title={e.title} category={e.category} content={e.content} subTitle="3학년, 2시간 전" />)
+                    list.filter((e) => {
+                        if (e.title.toLowerCase().includes(searchText)) return true
+                        if (e.content.toLowerCase().includes(searchText)) return true
+                        if (e.category.toLowerCase().includes(searchText)) return true
+
+                        else return false
+                    }).map(e => <PostItem key={e.id} to={`/post/${e.id}`} title={e.title} category={e.category} content={e.content} subTitle="3학년, 2시간 전" />)
                 }
             </Flex>
-            <FloatingButton onClick={() => navigate('/post/write')}>
-                <Plus size={32} color="#fff" />
-            </FloatingButton>
             <BottomNav />
         </View>
     )

@@ -3,6 +3,7 @@ import { TextField, Button, Radio, RadioGroup, TextArea, Select } from 'opize-de
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { Back } from "../../components/back";
 
 const StyledForm = styled.form`
     display: flex;
@@ -19,7 +20,10 @@ export function Write(props) {
     }
     return (
         <View>
-            <Header></Header>
+            <Header>
+                <Back />
+                글쓰기
+            </Header>
             <StyledForm onSubmit={handleSubmit(submit)}>
 
                 <TextField {...register('title', {
@@ -57,9 +61,14 @@ export function Write(props) {
                             required: true
                     })} label='날짜' error={errors.id?.type === 'required' && '날짜'} />
                 
-                <TextField {...register('contact', {
-                            required: true
-                    })} label='연락방법' error={errors.id?.type === 'required' && '연락방법'}  />
+                <TextArea {...register('contact', {
+                    required: true
+                })}
+                    label='연락방법'
+                    error={errors.content?.type === 'required' && '연락방법을 작성해주세요'}
+                    placeholder='어떻게 연락할건지 기입해주세요'
+                    
+                />
                 
                 <TextField {...register('quote', {
                             required: true

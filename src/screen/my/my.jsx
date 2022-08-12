@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Header, View } from "../../components";
+import { Back } from "../../components/back";
 import { BottomNav } from "../../components/bottomNav";
 
 const StyledForm = styled.form`
@@ -42,7 +43,10 @@ export function My(){
 
     return(
         <View>
-            <Header></Header>
+            <Header>
+                <Back />
+                내 정보
+            </Header>
             <UserInfo>
                 <H1>이름</H1>
                 <P>학번</P>

@@ -64,7 +64,7 @@ export function BottomNav(props) {
         <Outer>
             <Inner>
                 <Item icon={<House />} to='/post' label='홈' isSelected={tab === 'post'} />
-                <Item icon={<MagnifyingGlass />} to='/search' label='검색' isSelected={tab === 'search'}  />
+                {/* <Item icon={<MagnifyingGlass />} to='/post/search' label='검색' isSelected={tab === 'search'}  /> */}
                 <Item icon={<User />} to='/my' label='내 정보' isSelected={tab === 'my'} />
                 <Item icon={<List />} to='/all' label='전체' isSelected={tab === 'all'} />
             </Inner>

@@ -8,7 +8,8 @@ const HeaderOuter = styled.div`
     width: 100%;
     border-bottom: solid 1px ${cv.border3};
     background-color: #ffffff;
-    height: 52px;
+    height: 48px;
+    z-index: 10;
 `
 
 const HeaderInner = styled.div`
