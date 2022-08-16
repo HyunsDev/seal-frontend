@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const StyledForm = styled.form`
     display: flex;
@@ -34,13 +35,27 @@ export function SignIn() {
         try {
             const res = await axios.post(`${process.env.REACT_APP_API_SERVER}/auth/sign-in`, {
                 id: data.id,
-                password: data.password
+                password: data.password,
             })
             console.log(res)
             localStorage.setItem('token', res.data.token)
             navigate('/')
         } catch (err) {
             console.error(err)
+            if (err.response) {
+                switch (err.response.data.code) {
+                    case 'wrong_password':
+                        toast.error('비밀번호가 틀렸어요.')
+                        break
+                    case 'user_not_found':
+                        toast.error('존재하지 않는 아이디에요.')
+                        break
+                    default:
+                        toast.error('예상하지 못한 문제가 발생했어요. 개발자에게 연락해주세요.')
+                }
+            } else {
+                toast.error('서버에 연결할 수 없어요.')
+            }
         }
     }
 
@@ -71,8 +86,7 @@ export function SignIn() {
                         <StyledLink to='/sign-up'>회원가입</StyledLink>
                     </Flex.Center>
                 </StyledForm>
-                
-                
+            
             </LayoutBottom>
         </View>
     )

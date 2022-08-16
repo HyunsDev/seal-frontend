@@ -23,7 +23,7 @@ export function Main(props) {
     useEffect(() => {
         ;(async () => {
             try {
-                throw Error()
+                // throw Error()
                 const res = await axios.get(`${process.env.REACT_APP_API_SERVER}/post`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -31,46 +31,47 @@ export function Main(props) {
                 })
                 setList(res.data.posts)
             } catch (err) {
-                setList([
-                    {
-                        id: 123,
-                        title: '제목',
-                        category: '모의 면접',
-                        createdAt: '123',
-                        tag : ['태그1', '태그2'],
-			            status: "상태(open, close, pause)",
-			            condition: {
-			            	grade: [1, 2],
-			            	line: "자연",
-                        },
-                        author: {
-                            id: "유저 아이디",
-                            name: "유저 이름",
-                            grade: "학년",
-                            class: "반",
-                            number: "번호",
-                        },
-                    }, {
-                        id: 124,
-                        title: '제목',
-                        category: '모의 면접',
-                        createdAt: '123',
-                        tag : ['태그1', '태그2'],
-			            status: "상태(open, close, pause)",
-			            condition: {
-			            	grade: [1, 2],
-			            	line: "자연",
-                        },
-                        author: {
-                            id: "유저 아이디",
-                            name: "유저 이름",
-                            grade: "학년",
-                            class: "반",
-                            number: "번호",
-                        },
-                    },
+                console.error(err)
+                // setList([
+                //     {
+                //         id: 123,
+                //         title: '제목',
+                //         category: '모의 면접',
+                //         createdAt: '123',
+                //         tag : ['태그1', '태그2'],
+			    //         status: "상태(open, close, pause)",
+			    //         condition: {
+			    //         	grade: [1, 2],
+			    //         	line: "자연",
+                //         },
+                //         author: {
+                //             id: "유저 아이디",
+                //             name: "유저 이름",
+                //             grade: "학년",
+                //             class: "반",
+                //             number: "번호",
+                //         },
+                //     }, {
+                //         id: 124,
+                //         title: '제목',
+                //         category: '모의 면접',
+                //         createdAt: '123',
+                //         tag : ['태그1', '태그2'],
+			    //         status: "상태(open, close, pause)",
+			    //         condition: {
+			    //         	grade: [1, 2],
+			    //         	line: "자연",
+                //         },
+                //         author: {
+                //             id: "유저 아이디",
+                //             name: "유저 이름",
+                //             grade: "학년",
+                //             class: "반",
+                //             number: "번호",
+                //         },
+                //     },
 
-                ])
+                // ])
                 // console.error(err)
             }
         })()

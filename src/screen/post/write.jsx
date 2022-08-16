@@ -1,9 +1,10 @@
 import { Header, View } from "../../components";
-import { TextField, Button, Radio, RadioGroup, TextArea, Select } from 'opize-design-system'
+import { TextField, Button, Radio, RadioGroup, TextArea, Select, Checkbox } from 'opize-design-system'
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { Back } from "../../components/back";
+import axios from "axios";
 
 const StyledForm = styled.form`
     display: flex;
@@ -15,9 +16,38 @@ const StyledForm = styled.form`
 export function Write(props) {
     const navigate = useNavigate()
     const { register, handleSubmit, formState: { errors, isDirty }, watch } = useForm();
+
     const submit = async (data) => {
+        console.log(data)
+
+        let grade = []
+        if (data.grade1) grade = [...grade, 1]
+        if (data.grade2) grade = [...grade, 2]
+        if (data.grade3) grade = [...grade, 3]
+
+        const form = {
+            title: data.title,
+            content: data.content,
+            category: data.category,
+            tag: '',
+            contact: data.contact,
+            condition: {
+                grade,
+                line: '',
+                quote: Number(data.quote)
+            }
+        }
+
+        const res = await axios.post(`${process.env.REACT_APP_API_SERVER}/post`, form, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        console.log(res)
+
         navigate('/post')
     }
+
     return (
         <View>
             <Header>
@@ -26,11 +56,11 @@ export function Write(props) {
             </Header>
             <StyledForm onSubmit={handleSubmit(submit)}>
 
-                <TextField {...register('title', {
+                <TextField required {...register('title', {
                             required: true
                     })} label='제목' error={errors.title?.type === 'required' && '제목'} />
 
-                <TextArea {...register('content', {
+                <TextArea required {...register('content', {
                     required: true
                 })}
                     label='내용'
@@ -39,40 +69,39 @@ export function Write(props) {
                     
                 />
                 
-                <RadioGroup label='분류'>
-                    <Radio {...register("radio")} label='모의면접' value='interview' />
-                    <Radio {...register("radio")} label='모의 자소서 첨삭' value='correction' />
-                    <Radio {...register("radio")} label='프로젝트' value='project' />
+                <RadioGroup label='분류' required>
+                    <Radio {...register("category")} label='모의면접' value='interview' />
+                    <Radio {...register("category")} label='모의 자소서 첨삭' value='correction' />
+                    <Radio {...register("category")} label='프로젝트' value='project' />
                 </RadioGroup>
-                
-                <RadioGroup label='대상'>
-                    <Radio {...register("radio")} label='1학년' value='grade 1' />
-                    <Radio {...register("radio")} label='2학년' value='grade 2' />
-                    <Radio {...register("radio")} label='3학년' value='grade 3' />
-                </RadioGroup>
-                
-                <Select {...register('select')} label='장소'>
-                    <Select.Option value='option1'>미정</Select.Option>
-                    <Select.Option value='option2'>Option 2</Select.Option>
-                    <Select.Option value='option3'>Option 3</Select.Option>
+
+                <Checkbox {...register('grade1')} text='1학년' label='학년'  />
+                <Checkbox {...register('grade2')} text='2학년' />
+                <Checkbox {...register('grade3')} text='3학년' />
+
+                <Select {...register('location')} label='장소' required>
+                    <Select.Option value='null'>미정</Select.Option>
+                    <Select.Option value='class'>교실</Select.Option>
+                    <Select.Option value='inSchool'>학교 내</Select.Option>
+                    <Select.Option value='outSchool'>학교 외</Select.Option>
                 </Select>
 
-                <TextField {...register('date', {
-                            required: true
-                    })} label='날짜' error={errors.id?.type === 'required' && '날짜'} />
+                <TextField required {...register('date', {
+                        required: true
+                })} label='날짜' error={errors.date?.type === 'required' && '예상 날짜를 입력해주세요.'} />
                 
-                <TextArea {...register('contact', {
+                <TextArea required {...register('contact', {
                     required: true
                 })}
                     label='연락방법'
-                    error={errors.content?.type === 'required' && '연락방법을 작성해주세요'}
-                    placeholder='어떻게 연락할건지 기입해주세요'
+                    error={errors.contact?.type === 'required' && '연락방법을 작성해주세요'}
+                    placeholder='전화번호, 이메일, 학년 반 등 연락할 방법을 적어주세요.'
                     
                 />
                 
-                <TextField {...register('quote', {
+                <TextField required {...register('quote', {
                             required: true
-                    })} label='참여인원' error={errors.id?.type === 'required' && '참여인원'} type='number'  />
+                    })} label='참여인원' error={errors.quote?.type === 'required' && '참여인원'} type='number'  />
 
                 <Button type='submit' label='등록하기' variant='contained' width='100%' />
             </StyledForm>

@@ -3,7 +3,7 @@ import { TextField, Button, Radio, RadioGroup, TextArea, Select, Flex, cv, useTo
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 import dayjs from 'dayjs';
@@ -97,7 +97,9 @@ function Post(props) {
                     <PostAuthorInfo>{props.data?.author?.grade}학년 {props.data?.author?.class}반</PostAuthorInfo>
                 </Flex>
                 <Flex style={{alignItems: 'center'}}>
-                    <Button label='연락하기' onClick={() => modal.open(<Modal>{props.data.contact}</Modal>, '연락하기')} variant='contained' />
+                    <Button label='연락하기' onClick={() => modal.open(<Modal>{props.data.contact}</Modal>, {
+                        title: '연락하기'
+                    })} variant='contained' />
                 </Flex>
             </PostAuthor>
         </StyledPost>
@@ -141,13 +143,13 @@ function Comment(props) {
             <Divider />
             {
                 props.comment?.map(e => (
-                    <>
-                        <CommentItem key={e.id}>
+                    <React.Fragment key={e.id}>
+                        <CommentItem>
                             <CommentItemAuthor>{e?.author}</CommentItemAuthor>
                             <CommentItemContent>{e?.content}</CommentItemContent>
                         </CommentItem>
                         <Divider />
-                    </>
+                    </React.Fragment>
                 ))
             }
         </StyledComment>
@@ -156,11 +158,13 @@ function Comment(props) {
 
 const WriteCommentOuter = styled.div`
     position: fixed;
-    bottom: 12px;
+    bottom: 0;
+    padding-bottom: 12px;
     left: 0;
     width: 100%;
     display: flex;
     justify-content: center;
+    background-color: #ffffff;
 `
 
 const WriteCommentInter = styled.div`
@@ -187,12 +191,12 @@ export function Item() {
     const dialog = useDialog()
     const { id } = useParams()
     const [ data, setData ] = useState({})
-    const topLoading = useTopLoading()
+    const [ comment, setComment ] = useState('')
+    const isCommenting = useRef(false)
 
     useEffect(() => {
         ;(async () => {
             try {
-                throw Error()
                 const res = await axios.get(`${process.env.REACT_APP_API_SERVER}/post/${id}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -200,46 +204,39 @@ export function Item() {
                 })
                 setData(res.data)
             } catch (err) {
-                setData(
-                    {
-                        id: 123,
-                        title: '제목',
-                        category: '모의 면접',
-                        content: "글 내용",
-                        contact: '전화번호: 010-1234-1234',
-                        createdAt: new Date().toISOString(),
-                        tag : ['태그1', '태그2'],
-			            status: "상태(open, close, pause)",
-			            condition: {
-			            	grade: [1, 2],
-			            	line: "자연",
-                        },
-                        author: {
-                            id: "유저 아이디",
-                            name: "유저 이름",
-                            grade: 3,
-                            class: 5,
-                            number: 12,
-                            phone: '010-1234-1234'
-                        },
-                        comment: [
-                            {
-                                id: 1,
-                                author: '박현우',
-                                content: '댓글'
-                            },
-                            {
-                                id: 2,
-                                author: '박현우',
-                                content: '댓글2'
-                            }
-                        ]
-                    }
-                )
-                
+                console.error(err)
             }
         })()
     }, [id])
+
+    const postComment = (e) => {
+        ;(async () => {
+            if (e.code === 'Enter' && !isCommenting.current) {
+                isCommenting.current = true
+                if (comment === '') return
+                await axios.post(`${process.env.REACT_APP_API_SERVER}/post/${id}/comment`, {
+                    content: comment
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                })
+                setData(prev => ({
+                    ...prev,
+                    comment: [
+                        ...prev.comment,
+                        {
+                            id: Infinity,
+                            author: '나',
+                            content: comment
+                        }
+                    ]
+                }))
+                isCommenting.current = false
+                setComment('')
+            }
+        })()
+    }
 
     return (
         <View noPadding>
@@ -275,7 +272,7 @@ export function Item() {
             <MiddleSpacer />
             <Comment comment={data.comment} />
             <WriteComment>
-                <TextField placeholder="댓글 남기기" />
+                <TextField placeholder="댓글 남기기" onKeyDown={postComment} value={comment} onChange={e => setComment(e.target.value)} />
             </WriteComment>
         </View>
     )

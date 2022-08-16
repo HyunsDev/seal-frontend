@@ -8,6 +8,7 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const StyledForm = styled.form`
     display: flex;
@@ -40,13 +41,32 @@ export function SignUp() {
                 password: data.password,
                 name: data.name,
                 type: data.type,
-
+                grade: data.studentId.slice(0, 1),
+                class: data.studentId.slice(1, 2),
+                number: data.studentId.slice(2, 4),
             })
             console.log(res)
             localStorage.setItem('token', res.data.token)
             navigate('/') 
         } catch (err) {
             console.error(err)
+            if (err.response) {
+                switch (err.response.data.code) {
+                    case 'wrong_password':
+                        toast.error('비밀번호가 잘못됬어요.')
+                        break
+                    case 'account_already_exist':
+                        toast.error('이미 아이디가 존재해요.')
+                        break
+                    case 'wrong_id':
+                        toast.error('잘못된 아이디에요.')
+                        break
+                    default:
+                        toast.error('예상하지 못한 문제가 발생했어요. 개발자에게 연락해주세요.')
+                }
+            } else {
+                toast.error('서버에 연결할 수 없어요.')
+            }
         }
     }
 
@@ -75,15 +95,16 @@ export function SignUp() {
                         validate: value => value === password.current || '비밀번호가 틀립니다.'
                     })} label='비밀번호 재확인'
                         type="password"
-                        error={errors.password?.message}  />
+                        error={errors.repeatPassword?.message}  />
                         
+                    <TextField {...register('studentId')} label='학번' />
 
                     <Select {...register('type', {
                         required: true
                     })} label='구분'>
-                        <Select.Option>학생</Select.Option>
-                        <Select.Option>선생님</Select.Option>
-                        <Select.Option>학부모</Select.Option>
+                        <Select.Option value={'student'}>학생</Select.Option>
+                        <Select.Option value={'teacher'}>선생님</Select.Option>
+                        <Select.Option value={'other'}>기타</Select.Option>
                     </Select>
 
                     <Button
