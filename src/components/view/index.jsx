@@ -15,6 +15,7 @@ const Outer = styled.div`
     width: 100%;
     overflow-x: hidden;
     background-color: ${props => props.backgroundColor || cv.bg_page2};
+    padding-bottom: 80px;
 `
 
 const Inner = styled.div`

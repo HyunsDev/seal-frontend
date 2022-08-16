@@ -12,6 +12,7 @@ const Outer = styled.div`
     border-top: solid 1px ${cv.border3};
     background-color: #ffffff;
     height: 52px;
+    z-index: 99;
 `
 
 const Inner = styled.div`
